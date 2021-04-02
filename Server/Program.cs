@@ -18,6 +18,8 @@ enum SendFormCode : byte
     ChangeID = 0b0000000101,
     ChangePW = 0b0000000110,
     DeleteAccount = 0b0000000111,
+    id_Overlap = 0b0000001000,
+    isInputCorrect = 0b0000001001,
 }
 
 class Program
