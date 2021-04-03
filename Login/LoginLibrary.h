@@ -8,6 +8,7 @@
 #define LoginLibrary_API __declspec(dllimport)
 #endif
 
+
 extern "C" LoginLibrary_API bool signUp(
 	const std::string id, const std::string pw,
 	const std::string email, const std::string nickname);
