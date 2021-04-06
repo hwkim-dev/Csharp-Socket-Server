@@ -54,9 +54,15 @@ static class Program
             }
         }
     }
-
+    
     private static char form;
+
+    //클라이언트로부터 받을 값
     private static string txt;
+
+    //클라이언트에게 보낼 값
+    private static byte[] return_To_Client = new byte[50];
+
     //클라이언트에게 넘겨주기
     private static void asyncReceiveCallback(IAsyncResult asyncResult)
     {
@@ -66,21 +72,24 @@ static class Program
         int nRecv = rcvData.Socket.EndReceive(asyncResult);
 
         //getString___From rcvData.Buffer -> <n ~ nRecv>
-        txt = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
+        string txt = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
         //data Form확인하기
-        Console.WriteLine();
         Console.WriteLine(rcvData.Buffer[0]);
+        Console.WriteLine(txt);
+
+        
         unsafe
         {
-            fixed(byte* form = rcvData.Buffer)
+            fixed (char* _rcvdata = txt) fixed (byte* _return_To_Client = return_To_Client)
             {
-                bool k = Form.check_Form(form, txt);
+                
+                Form.chech_From(_rcvdata, _return_To_Client);
             }
         }
-
         //보낼 데이터
-        byte[] sendBytes = Encoding.UTF8.GetBytes("Hello: " + txt);
+        
 
+        byte[] sendBytes = Encoding.UTF8.GetBytes("hi");
         rcvData.Socket.BeginSend(sendBytes, 0, sendBytes.Length,
         SocketFlags.None, asyncSendCallback, rcvData.Socket);
 

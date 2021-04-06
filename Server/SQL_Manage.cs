@@ -6,19 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace LOGIN_DATA
 {
-    enum SendFormCode : byte
-    {
-        SignUp = 0b0000000001,
-        Login = 0b0000000010,
-        FindID = 0b0000000011,
-        FindPW = 0b0000000100,
-        ChangeID = 0b0000000101,
-        ChangePW = 0b0000000110,
-        DeleteAccount = 0b0000000111,
-        id_Overlap = 0b0000001000,
-        isInputCorrect = 0b0000001001,
-    }
-    
     static class LOGIN_SQL
     {
         /*SqlConnection con;
@@ -30,6 +17,85 @@ namespace LOGIN_DATA
         //데이터베이스의 위치 location of Database
         static SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
         static SqlCommand cmd;
+        public static unsafe void sign_Up(char* _rcvdata, byte* _return_To_Client)
+        {
+            try
+            {
+                cmd = new SqlCommand((*_rcvdata).ToString(), con);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                _return_To_Client[0] = 1; //1 == true
+            }
+            catch (Exception)
+            {
+                _return_To_Client[0] = 0; //0 == false
+            }
+        }
+        public static unsafe void login(char* _rcvdata, byte* _return_To_Client)
+        {
+            cmd = new SqlCommand((*_rcvdata).ToString(), con);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            rdr.Read();
+
+            //sbyte l = -1;
+            foreach (byte k in Encoding.UTF8.GetBytes(rdr["ID"].ToString()))
+            {
+                if (k == (char)32) { break; }
+                //_return_To_Client[++l] = k;
+                *_return_To_Client = k;
+
+                //배열의 다음인덱스
+                ++_return_To_Client;
+            }
+        }
+        public static unsafe void find_Id(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void find_Pw(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void change_Id(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void change_Pw(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void delete_Accoutnt(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void email_Vertify(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void id_Overlap(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void nick_Overlap(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void email_Overlap(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        public static unsafe void is_Input_Correct(char* _rcvdata, byte* _return_To_Client)
+        {
+
+        }
+        /*
         public static unsafe void SignUp(char* id, char* pw, char* email, char* nickname, bool* succed)
         {
             //새로 가입했을때 SQL문
@@ -170,6 +236,6 @@ namespace LOGIN_DATA
 
         //계졍삭제(하기전에 아이디비밀번호 맞는지부터 체크)
         //DELETE FROM ACCOUNT
-        //WHERE ID = 입력한아이디
+        //WHERE ID = 입력한아이디*/
     }
 }

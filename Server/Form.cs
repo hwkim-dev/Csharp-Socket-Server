@@ -8,22 +8,72 @@ namespace Login_Server
     [Flags]
     enum SendFormCode
     {
-        SignUp = 0b0000000001,
-        Login = 0b0000000010,
-        FindID = 0b0000000011,
-        FindPW = 0b0000000100,
-        //가능하면 추가
-        ChangeID = 0b0000000101,
-        ChangePW = 0b0000000110,
-        DeleteAccount = 0b0000000111,
-        id_Overlap = 0b0000001000,
-        nick_Overlap = 0b0000001001,
-        email_Overlap = 0b0000001010,
-        isInputCorrect = 0b0000001011,
+        SIGNUP = 0b00000001,
+        LOGIN = 0b00000010,
+        FINDID = 0b00000011,
+        FINDPW = 0b00000100,
+        CHANGEID = 0b00000101,
+        CHANGEPW = 0b00000111,
+        DELETEACCOUNT = 0b00001000,
+        EMAILVERTIFY = 0b00001001,
+        IDOVERLAP = 0b00001011,
+        NICKOVERLAP = 0b00001100,
+        EMAILOVERLAP = 0b00001101,
+        ISINPUTCORRECT = 0b00001111,
+    }
+    enum Purpose
+    {
+        CHECKPW = 0b10000000,
     }
 
     static class Form
     {
+        public static unsafe void chech_From(char* _rcvdata, byte* _return_To_Client)
+        {
+            switch ((byte)_rcvdata[0])
+            {
+                case (byte)SendFormCode.SIGNUP:
+                    LOGIN_SQL.sign_Up(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.LOGIN:
+                    LOGIN_SQL.login(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.FINDID:
+                    LOGIN_SQL.find_Id(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.FINDPW:
+                    LOGIN_SQL.find_Pw(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.CHANGEID:
+                    LOGIN_SQL.change_Id(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.CHANGEPW:
+                    LOGIN_SQL.change_Pw(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.DELETEACCOUNT:
+                    LOGIN_SQL.delete_Accoutnt(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.EMAILVERTIFY:
+                    LOGIN_SQL.email_Vertify(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.IDOVERLAP:
+                    LOGIN_SQL.id_Overlap(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.NICKOVERLAP:
+                    LOGIN_SQL.nick_Overlap(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.EMAILOVERLAP:
+                    LOGIN_SQL.email_Overlap(_rcvdata, _return_To_Client);
+                    break;
+                case (byte)SendFormCode.ISINPUTCORRECT:
+                    LOGIN_SQL.is_Input_Correct(_rcvdata, _return_To_Client);
+                    break;
+                default:
+
+                    break;
+            }
+        }
+        /*
         static char[] id;
         static char[] pw;
         static char[] email;
@@ -212,6 +262,6 @@ namespace Login_Server
         private static unsafe void reset_in(char* first, char* second, char* third, char* fourth)
         {
 
-        }
+        }*/
     }
 }
