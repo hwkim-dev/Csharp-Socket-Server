@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 using LOGIN_DATA;
+using Newtonsoft.Json;
 
 namespace Login_Server
 {
     [Flags]
     enum SendFormCode
     {
-        SIGNUP = 0b00000001,
-        LOGIN = 0b00000010,
-        FINDID = 0b00000011,
-        FINDPW = 0b00000100,
-        CHANGEID = 0b00000101,
-        CHANGEPW = 0b00000111,
-        DELETEACCOUNT = 0b00001000,
-        EMAILVERTIFY = 0b00001001,
-        IDOVERLAP = 0b00001011,
-        NICKOVERLAP = 0b00001100,
-        EMAILOVERLAP = 0b00001101,
-        ISINPUTCORRECT = 0b00001111,
+        SIGNUP = 1,
+        LOGIN = 2,
+        FINDID = 3,
+        CHANGEID = 4,
+        CHANGEPW = 5,
+        DELETEACCOUNT = 6,
+        EMAILVERTIFY = 7,
+        IDOVERLAP = 8,
+        NICKOVERLAP = 9,
+        EMAILOVERLAP = 10,
+        ISINPUTCORRECT = 11,
     }
     enum Purpose
     {
@@ -28,45 +28,46 @@ namespace Login_Server
 
     static class Form
     {
-        public static unsafe void chech_From(char* _rcvdata, byte* _return_To_Client)
+        public static unsafe void chech_From(byte* _return_To_Client)
         {
-            switch ((byte)_rcvdata[0])
+            //Console.WriteLine(JsonConvert.DeserializeObject();
+            //Console.WriteLine(JsonConvert.DeserializeObject(_txt));
+            //class instance = JsonConvert.DeserializeObject<class>(_txt)
+            
+            switch (User_Identity.type())
             {
                 case (byte)SendFormCode.SIGNUP:
-                    LOGIN_SQL.sign_Up(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.sign_Up(_return_To_Client);
                     break;
                 case (byte)SendFormCode.LOGIN:
-                    LOGIN_SQL.login(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.login(_return_To_Client);
                     break;
                 case (byte)SendFormCode.FINDID:
-                    LOGIN_SQL.find_Id(_rcvdata, _return_To_Client);
-                    break;
-                case (byte)SendFormCode.FINDPW:
-                    LOGIN_SQL.find_Pw(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.find_Id(_return_To_Client);
                     break;
                 case (byte)SendFormCode.CHANGEID:
-                    LOGIN_SQL.change_Id(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.change_Id(_return_To_Client);
                     break;
                 case (byte)SendFormCode.CHANGEPW:
-                    LOGIN_SQL.change_Pw(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.change_Pw(_return_To_Client);
                     break;
                 case (byte)SendFormCode.DELETEACCOUNT:
-                    LOGIN_SQL.delete_Accoutnt(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.delete_Accoutnt(_return_To_Client);
                     break;
                 case (byte)SendFormCode.EMAILVERTIFY:
-                    LOGIN_SQL.email_Vertify(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.email_Vertify(_return_To_Client);
                     break;
                 case (byte)SendFormCode.IDOVERLAP:
-                    LOGIN_SQL.id_Overlap(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.id_Overlap(_return_To_Client);
                     break;
                 case (byte)SendFormCode.NICKOVERLAP:
-                    LOGIN_SQL.nick_Overlap(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.nick_Overlap(_return_To_Client);
                     break;
                 case (byte)SendFormCode.EMAILOVERLAP:
-                    LOGIN_SQL.email_Overlap(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.email_Overlap(_return_To_Client);
                     break;
                 case (byte)SendFormCode.ISINPUTCORRECT:
-                    LOGIN_SQL.is_Input_Correct(_rcvdata, _return_To_Client);
+                    LOGIN_SQL.is_Input_Correct(_return_To_Client);
                     break;
                 default:
 

@@ -40,7 +40,7 @@ static class Program
                 //외부 접속 받아들이는 클래스
                 Socket clntSocket = srvSocket.Accept();
                 AsyncStateData data = new AsyncStateData();
-                data.Buffer = new byte[1024];
+                data.Buffer = new byte[128];
                 data.Socket = clntSocket;
 
                 /*byte[] recvBytes = new byte[1024];
@@ -72,18 +72,17 @@ static class Program
         int nRecv = rcvData.Socket.EndReceive(asyncResult);
 
         //getString___From rcvData.Buffer -> <n ~ nRecv>
-        string txt = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
+        User_Identity.Json = Encoding.UTF8.GetString(rcvData.Buffer, 0, nRecv);
         //data Form확인하기
-        Console.WriteLine(rcvData.Buffer[0]);
+        //Console.WriteLine(rcvData.Buffer[0]);
         Console.WriteLine(txt);
 
         
         unsafe
         {
-            fixed (char* _rcvdata = txt) fixed (byte* _return_To_Client = return_To_Client)
+            fixed (byte* _return_To_Client = return_To_Client)
             {
-                
-                Form.chech_From(_rcvdata, _return_To_Client);
+                Form.chech_From(_return_To_Client);
             }
         }
         //보낼 데이터
