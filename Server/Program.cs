@@ -20,7 +20,7 @@ static class Program
         {
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
             srvSocket.Bind(endPoint);
-
+            
             srvSocket.Listen(10);
             while (true)
             {

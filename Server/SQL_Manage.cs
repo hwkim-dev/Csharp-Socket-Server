@@ -12,6 +12,7 @@ namespace LOGIN_DATA
     
     static class LOGIN_SQL
     {
+        static Mail_Sender ms = new Mail_Sender();
         private const byte SUCCED = 1;
         private const byte FAIL = 0;
         /*SqlConnection con;
@@ -337,10 +338,14 @@ namespace LOGIN_DATA
                 rdr.Read();
 
                 Console.WriteLine(rdr["EMAIL"].ToString().Trim());
-                //send_Email();
-                //succed = *_return_To_Client = SUCCED;
-
-                //true false로만 return;
+                if (ms.send_Mail("hgim15338@gmail.com", "someone"))
+                {
+                    *_return_To_Client = SUCCED;
+                }
+                else
+                {
+                    *_return_To_Client = FAIL;
+                }
             }
             catch (Exception)
             {
@@ -482,23 +487,10 @@ namespace LOGIN_DATA
         {
             try
             {
-                //EMAILVERTICORRECT ins = JsonConvert.DeserializeObject<EMAILVERTICORRECT>(uId.Json);
-                //SqlCommand cmd = new SqlCommand("SELECT EMAIL " +
-                //"FROM ACCOUNT WHERE EMAIL='" + ins.Email + "'", con);
-                //con.Open();
-                //cmd.ExecuteNonQuery();
-                //SqlDataReader rdr = cmd.ExecuteReader();
-                ////보류!!
-                //if (rdr.Read())
-                //{
-                //    *_return_To_Client = SUCCED;
-                //}
-                //else
-                //{
-                //    *_return_To_Client = FAIL;
-                //}
-                //*_return_To_Client = SUCCED;
-
+                //6자리의 수에 인증이있고
+                //uId.Json[0~5]; 
+                //여기에 아이디가 있다.
+                //uId.Json[5~끝까지]; 
             }
             catch (Exception)
             {
