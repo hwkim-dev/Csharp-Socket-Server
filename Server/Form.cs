@@ -19,7 +19,7 @@ namespace Login_Server
         IDOVERLAP = 8,
         NICKOVERLAP = 9,
         EMAILOVERLAP = 10,
-        ISINPUTCORRECT = 11,
+        EMAILVERTICORRECT = 11,
     }
     enum Purpose
     {
@@ -28,49 +28,49 @@ namespace Login_Server
 
     static class Form
     {
-        public static unsafe void chech_From(byte* _return_To_Client)
+        public static unsafe void chech_From(User_Identity uId, byte* _return_To_Client)
         {
             //Console.WriteLine(JsonConvert.DeserializeObject();
             //Console.WriteLine(JsonConvert.DeserializeObject(_txt));
             //class instance = JsonConvert.DeserializeObject<class>(_txt)
-            
-            switch (User_Identity.type())
+            Console.WriteLine("(FORM)TYPE = " + uId.type());
+            switch (uId.type())
             {
                 case (byte)SendFormCode.SIGNUP:
-                    LOGIN_SQL.sign_Up(_return_To_Client);
+                    LOGIN_SQL.sign_Up(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.LOGIN:
-                    LOGIN_SQL.login(_return_To_Client);
+                    LOGIN_SQL.login(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.FINDID:
-                    LOGIN_SQL.find_Id(_return_To_Client);
+                    LOGIN_SQL.find_Id(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.CHANGEID:
-                    LOGIN_SQL.change_Id(_return_To_Client);
+                    LOGIN_SQL.change_Id(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.CHANGEPW:
-                    LOGIN_SQL.change_Pw(_return_To_Client);
+                    LOGIN_SQL.change_Pw(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.DELETEACCOUNT:
-                    LOGIN_SQL.delete_Accoutnt(_return_To_Client);
+                    LOGIN_SQL.delete_Accoutnt(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.EMAILVERTIFY:
-                    LOGIN_SQL.email_Vertify(_return_To_Client);
+                    LOGIN_SQL.email_Vertify(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.IDOVERLAP:
-                    LOGIN_SQL.id_Overlap(_return_To_Client);
+                    LOGIN_SQL.id_Overlap(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.NICKOVERLAP:
-                    LOGIN_SQL.nick_Overlap(_return_To_Client);
+                    LOGIN_SQL.nick_Overlap(uId, _return_To_Client);
                     break;
                 case (byte)SendFormCode.EMAILOVERLAP:
-                    LOGIN_SQL.email_Overlap(_return_To_Client);
+                    LOGIN_SQL.email_Overlap(uId, _return_To_Client);
                     break;
-                case (byte)SendFormCode.ISINPUTCORRECT:
-                    LOGIN_SQL.is_Input_Correct(_return_To_Client);
+                case (byte)SendFormCode.EMAILVERTICORRECT:
+                    LOGIN_SQL.email_Verti_Correct(uId, _return_To_Client);
                     break;
                 default:
-
+                    Console.WriteLine("defalt");
                     break;
             }
         }
