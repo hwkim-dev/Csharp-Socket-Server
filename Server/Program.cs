@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Timers;
+
 public class AsyncStateData
 {
     public byte[] Buffer;
@@ -12,39 +14,60 @@ public class AsyncStateData
 
 static class Program
 {
+    //60초에 한번씩 pop하기
+    static void timer_Elapsed(object sender, ElapsedEventArgs e)
+    {
+        Email_Vertify_Table.Destroy();
+    }
 
     static void Main(string[] args)
     {
-        using (Socket srvSocket =
-        new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+        try
         {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
-            srvSocket.Bind(endPoint);
-            
-            srvSocket.Listen(10);
-            while (true)
+            Console.WriteLine("Starting Server....");
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Interval = 60000; // 60000 = 60 초
+            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Start();
+
+            using (Socket srvSocket =
+            new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
-                //외부 접속 받아들이는 클래스
-                Socket clntSocket = srvSocket.Accept();
-                //받아드릴 데이터가 있을때만 이 밑으로 들어감.
-                //Thread addTh = new Thread(accept);
-                //addTh.IsBackground = true;
-                //addTh.Start(clntSocket);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
+                srvSocket.Bind(endPoint);
 
-                ThreadPool.QueueUserWorkItem(accept, clntSocket);
+                srvSocket.Listen(10);
+                Console.WriteLine("Server is running");
+                while (true)
+                {
+                    //외부 접속 받아들이는 클래스
+                    Socket clntSocket = srvSocket.Accept();
+                    //받아드릴 데이터가 있을때만 이 밑으로 들어감.
+                    //Thread addTh = new Thread(accept);
+                    //addTh.IsBackground = true;
+                    //addTh.Start(clntSocket);
 
-                Console.WriteLine("thread +1");
-                //// 서버 소켓이 동작하는 스레드
-                //Thread serverThread = new Thread(serverFunc);
-                //serverThread.IsBackground = true;
-                //serverThread.Start();
-                //Thread.Sleep(500); // 소켓 서버용 스레드가 실행될 시간을 주기 위해
+                    ThreadPool.QueueUserWorkItem(accept, clntSocket);
+                    //// 서버 소켓이 동작하는 스레드
+                    //Thread serverThread = new Thread(serverFunc);
+                    //serverThread.IsBackground = true;
+                    //serverThread.Start();
+                    //Thread.Sleep(500); // 소켓 서버용 스레드가 실행될 시간을 주기 위해
 
-                //Console.WriteLine("Pressany key to exit...");
-                ////thread.join이 없으니
-                ////메인스레드는 계속 감... 여기서 멈춰있다. -> readLine()때문에
-                //Console.ReadLine();
+                    //Console.WriteLine("Pressany key to exit...");
+                    ////thread.join이 없으니
+                    ////메인스레드는 계속 감... 여기서 멈춰있다. -> readLine()때문에
+                    //Console.ReadLine();
+                }
             }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        finally
+        {
+
         }
     }
 
@@ -119,7 +142,7 @@ static class Program
             int nRecv = rcvData.Socket.EndReceive(asyncResult);
 
             //클라이언트에게 보낼 값
-            byte[] return_To_Client = new byte[50];
+            byte[] return_to_client = new byte[50];
 
             //스레드 끼리 겹치지 않기 위해 새 클래스 생성
             User_Identity uId = new User_Identity();
@@ -137,15 +160,15 @@ static class Program
 
             unsafe
             {
-                fixed (byte* _return_To_Client = return_To_Client)
+                fixed (byte* _return_to_client = return_to_client)
                 {
-                    Form.chech_From(uId, _return_To_Client);
+                    Form.chech_From(uId, _return_to_client);
                 }
             }
             //보낼 데이터
 
             //byte[] sendBytes = Encoding.UTF8.GetBytes("hi");
-            rcvData.Socket.BeginSend(return_To_Client, 0, return_To_Client.Length,
+            rcvData.Socket.BeginSend(return_to_client, 0, return_to_client.Length,
             SocketFlags.None, asyncSendCallback, rcvData.Socket);
         }catch(Exception)
         {

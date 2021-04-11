@@ -113,6 +113,7 @@ namespace LOGIN_DATA
 
             }
         }
+        //내부적으로 사용할 로그인
         private static unsafe bool login(string id, string pw)
         {
             try
@@ -338,13 +339,17 @@ namespace LOGIN_DATA
                 rdr.Read();
 
                 Console.WriteLine(rdr["EMAIL"].ToString().Trim());
-                if (ms.send_Mail("hgim15338@gmail.com", "someone"))
+                //첫번째에 이메일 주소
+                //두번째에 보내는사람이름
+                sbyte t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), "USER");
+                if (t == -1)
                 {
-                    *_return_To_Client = SUCCED;
+                    *_return_To_Client = FAIL;
                 }
                 else
                 {
-                    *_return_To_Client = FAIL;
+                    //t는 100을 넘지 못함
+                    *_return_To_Client = (byte)t;
                 }
             }
             catch (Exception)
@@ -473,24 +478,19 @@ namespace LOGIN_DATA
 
             }
         }
-
-
-        //[Serializable]
-        //private class EMAILVERTICORRECT
-        //{
-        //    private string email;
-
-            
-        //    public string Email { get => email; set => email = value; }
-        //}
         public static unsafe void email_Verti_Correct(User_Identity uId, byte*  _return_To_Client)
         {
             try
             {
                 //6자리의 수에 인증이있고
                 //uId.Json[0~5]; 
-                //여기에 아이디가 있다.
+                //여기에 커서(sbyte = 0~100) 있다.
                 //uId.Json[5~끝까지]; 
+                if (Int32.Parse(uId.Json.Substring(0,5)) == Email_Vertify_Table.find(Byte.Parse(uId.Json.Substring(6,1))))
+                {
+                    *_return_To_Client = SUCCED;
+                }
+                
             }
             catch (Exception)
             {

@@ -9,6 +9,7 @@ namespace Login_Server
     
     class Mail_Sender
     {
+        Random random = new Random();
         static SmtpClient Client = new SmtpClient()
         {
             Host = "smtp.gmail.com",
@@ -22,15 +23,17 @@ namespace Login_Server
                 Password = "swcontents#2"
             }
         };
-        public bool send_Mail(string _email, string _nickname)
+        public sbyte send_Mail(string _email, string _nickname)
         {
+            //111,111 ~ 999,999사이의 숫자를 return
+            int vertinum = random.Next(111111, 999999);
             MailMessage message = new MailMessage()
             {
                 //보내는사람
                 From = new MailAddress("sw.contents.defencegame@gmail.com", "softgames"),
                 Subject = "E-mail verification",
                 Body = "To complete your verification, enter the verification code on Client\n" +
-                "Verification code: " + "\n" +
+                "Verification code: " + vertinum + "\n" +
                 "If this wasn't you, please reset your password to secure your account.",
             };
             //메일 받는사람
@@ -40,11 +43,11 @@ namespace Login_Server
             {
                 //메일을 실제로 보내는 부분
                 Client.Send(message);
-                return true;
+                return Email_Vertify_Table.add_Item(vertinum);
             }
             catch (Exception)
             {
-                return false;
+                return -1;
             }
             finally
             {
