@@ -46,7 +46,7 @@ static class Program
                     //Thread addTh = new Thread(accept);
                     //addTh.IsBackground = true;
                     //addTh.Start(clntSocket);
-
+                    
                     ThreadPool.QueueUserWorkItem(accept, clntSocket);
                     //// 서버 소켓이 동작하는 스레드
                     //Thread serverThread = new Thread(serverFunc);

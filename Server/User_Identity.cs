@@ -13,5 +13,14 @@ namespace Login_Server
 
         public string Json { get => json; set => json = value; }
         public byte Fn { get => fn; set => fn = value; }
+
+        public byte getCursor()
+        {
+            return Byte.Parse(json.Substring(6, json.Length - 6));
+        }
+        public int getVerti()
+        {
+            return Int32.Parse(json.Substring(0, 6));
+        }
     }
 }

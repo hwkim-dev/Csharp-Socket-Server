@@ -30,10 +30,6 @@ namespace Login_Server
     {
         public static unsafe void chech_From(User_Identity uId, byte* _return_to_client)
         {
-            //Console.WriteLine(JsonConvert.DeserializeObject();
-            //Console.WriteLine(JsonConvert.DeserializeObject(_txt));
-            //class instance = JsonConvert.DeserializeObject<class>(_txt)
-            Console.WriteLine("(FORM)TYPE = " + uId.type());
             switch (uId.type())
             {
                 case (byte)SendFormCode.SIGNUP:
@@ -70,7 +66,6 @@ namespace Login_Server
                     LOGIN_SQL.email_Verti_Correct(uId, _return_to_client);
                     break;
                 default:
-                    Console.WriteLine("defalt");
                     break;
             }
         }

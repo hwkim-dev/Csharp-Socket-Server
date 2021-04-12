@@ -332,16 +332,18 @@ namespace LOGIN_DATA
                 SqlCommand cmd = new SqlCommand("SELECT EMAIL FROM ACCOUNT " +
                     "WHERE EMAIL='" + ins.Email + "'", con);
                 con.Open();
+                
                 cmd.ExecuteNonQuery();
-
+                
                 SqlDataReader rdr = cmd.ExecuteReader();
 
                 rdr.Read();
+                
 
-                Console.WriteLine(rdr["EMAIL"].ToString().Trim());
                 //첫번째에 이메일 주소
                 //두번째에 보내는사람이름
                 sbyte t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), "USER");
+                
                 if (t == -1)
                 {
                     *_return_To_Client = FAIL;
@@ -349,6 +351,8 @@ namespace LOGIN_DATA
                 else
                 {
                     //t는 100을 넘지 못함
+                    *_return_To_Client = SUCCED;
+                    ++_return_To_Client;
                     *_return_To_Client = (byte)t;
                 }
             }
@@ -482,11 +486,7 @@ namespace LOGIN_DATA
         {
             try
             {
-                //6자리의 수에 인증이있고
-                //uId.Json[0~5]; 
-                //여기에 커서(sbyte = 0~100) 있다.
-                //uId.Json[5~끝까지]; 
-                if (Int32.Parse(uId.Json.Substring(0,5)) == Email_Vertify_Table.find(Byte.Parse(uId.Json.Substring(6,1))))
+                if (uId.getVerti() == Email_Vertify_Table.find(uId.getCursor()))
                 {
                     *_return_To_Client = SUCCED;
                 }

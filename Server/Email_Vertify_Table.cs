@@ -16,15 +16,14 @@ static class Email_Vertify_Table
     //    time = 0;
     //    table = new int[3, 100];
     //}
-
+    static object obj = new object();
     public static sbyte add_Item(int verti_num)
     {
-        lock (null)
+        lock (obj)
         {
             try
             {
                 table[time, cursor] = verti_num;
-                ++cursor;
                 return cursor;
             }
             catch (Exception)
@@ -33,7 +32,7 @@ static class Email_Vertify_Table
             }
             finally
             {
-
+                ++cursor;
             }
         }
     }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.IO;
 using System.Net;
+using System.ComponentModel;
 
 namespace Login_Server
 {
     
     class Mail_Sender
     {
-        Random random = new Random();
+        private Random random = new Random();
         static SmtpClient Client = new SmtpClient()
         {
             Host = "smtp.gmail.com",
@@ -27,6 +28,7 @@ namespace Login_Server
         {
             //111,111 ~ 999,999사이의 숫자를 return
             int vertinum = random.Next(111111, 999999);
+            Console.WriteLine(_email+" + "+ _nickname);
             MailMessage message = new MailMessage()
             {
                 //보내는사람
@@ -36,13 +38,16 @@ namespace Login_Server
                 "Verification code: " + vertinum + "\n" +
                 "If this wasn't you, please reset your password to secure your account.",
             };
+
             //메일 받는사람
             message.To.Add(new MailAddress(_email, _nickname));
 
             try
             {
+                Client.SendCompleted += Client_sendCompleted;
+                Client.SendMailAsync(message);
                 //메일을 실제로 보내는 부분
-                Client.Send(message);
+                //Client.Send(message);
                 return Email_Vertify_Table.add_Item(vertinum);
             }
             catch (Exception)
@@ -51,8 +56,12 @@ namespace Login_Server
             }
             finally
             {
-                
+
             }
+        }
+        private void Client_sendCompleted(Object sender, AsyncCompletedEventArgs e)
+        {
+            //아무것도 하지 않음
         }
     }
 }
