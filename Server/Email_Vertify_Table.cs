@@ -24,15 +24,16 @@ static class Email_Vertify_Table
             try
             {
                 table[time, cursor] = verti_num;
+                ++cursor;
                 return cursor;
             }
             catch (Exception)
             {
-                return cursor;
+                ++cursor;
+                return -1;
             }
             finally
             {
-                ++cursor;
             }
         }
     }
@@ -57,7 +58,7 @@ static class Email_Vertify_Table
     }
 
     //C# Time 라이브러리에서 mm = minute만 받음
-    public static void Destroy()
+    public static void destroy()
     {
         try
         {
@@ -73,6 +74,10 @@ static class Email_Vertify_Table
         catch (Exception e)
         {
             Console.WriteLine(e.Message + "cursor=" + cursor);
+        }
+        finally
+        {
+
         }
 
         //Destory()가 실행된후 time을 옮겨야 

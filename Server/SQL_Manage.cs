@@ -9,22 +9,14 @@ using System.Text.RegularExpressions;
 
 namespace LOGIN_DATA
 {
-    
     static class LOGIN_SQL
     {
         static Mail_Sender ms = new Mail_Sender();
         private const byte SUCCED = 1;
         private const byte FAIL = 0;
-        /*SqlConnection con;
-        SqlCommand cmd;
-        LOGIN_SQL(SqlConnection con)
-        {
-            this.con = con;
-        }*/
 
-        //Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName
-        //데이터베이스의 위치 location of Database
-        static SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
+
+        static SqlConnection con;
 
         [Serializable]
         private class SIGNUP_J
@@ -44,6 +36,7 @@ namespace LOGIN_DATA
             try
             {
                 SIGNUP_J ins = JsonConvert.DeserializeObject<SIGNUP_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("INSERT INTO ACCOUNT(ID, PW, EMAIL, NICKNAME) " +
                     "VALUES('" + ins.Id + "', '" + ins.Pw + "', '" + ins.Email + "', '" + ins.Nickname + "');", con);
                 //cmd = new SqlCommand(uId.Json, con);
@@ -79,20 +72,20 @@ namespace LOGIN_DATA
             try
             {
                 LOGIN_J ins = JsonConvert.DeserializeObject<LOGIN_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT PW " +
                     "FROM ACCOUNT WHERE ID='" + ins.Id + "'", con);
+                
                 con.Open();
-
-                //문제발생
+                Console.WriteLine(1);
                 cmd.ExecuteNonQuery();
-            
-                SqlDataReader rdr = cmd.ExecuteReader();
 
+                SqlDataReader rdr = cmd.ExecuteReader();
 
 
                 rdr.Read();
 
-                Console.WriteLine(rdr["PW"].ToString().Trim() + "a");
+                Console.WriteLine(rdr["PW"].ToString().Trim() + "|");
                 if (rdr["PW"].ToString().Trim().Equals(ins.Pw))
                 {
                     Console.WriteLine("t");
@@ -104,8 +97,9 @@ namespace LOGIN_DATA
                     *_return_To_Client = FAIL;
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
+                Console.WriteLine(e);
                 *_return_To_Client = FAIL;
             }
             finally
@@ -118,6 +112,7 @@ namespace LOGIN_DATA
         {
             try
             {
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT PW " +
                     "FROM ACCOUNT WHERE ID='" + id + "'", con);
                 con.Open();
@@ -164,6 +159,7 @@ namespace LOGIN_DATA
             try
             {
                 FINDID_J ins = JsonConvert.DeserializeObject<FINDID_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT ID " +
                     "FROM ACCOUNT WHERE EMAIL ='" + ins.Email + "'", con);
 
@@ -207,6 +203,7 @@ namespace LOGIN_DATA
             try
             {
                 CHANGEID_J ins = JsonConvert.DeserializeObject<CHANGEID_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
                     "SET ID='" + ins.New_Id + "' WHERE ID='" + ins.Id + "'", con);
                 con.Open();
@@ -234,23 +231,28 @@ namespace LOGIN_DATA
             private string id;
             private string pw;
             private string new_Pw;
+            private string key;
 
-            
             public string Id { get => id; set => id = value; }
             public string Pw { get => pw; set => pw = value; }
             public string New_Pw { get => new_Pw; set => new_Pw = value; }
+            public string Key { get => key; set => key = value; }
         }
         public static unsafe void change_Pw(User_Identity uId, byte*  _return_To_Client)
         {
             try
             {
                 CHANGEPW_J ins = JsonConvert.DeserializeObject<CHANGEPW_J>(uId.Json);
-                SqlConnection con_New = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
+                //if (uId.Key)
+                //{
+
+                //}
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
-                        "SET PW='" + ins.New_Pw + "' WHERE ID='" + ins.Id + "'", con_New);
+                        "SET PW='" + ins.New_Pw + "' WHERE ID='" + ins.Id + "'", con);
                 if (login(ins.Id, ins.Pw))
                 {
-                    con_New.Open();
+                    con.Open();
                     cmd.ExecuteNonQuery();
                     *_return_To_Client = SUCCED;
                 }
@@ -289,13 +291,13 @@ namespace LOGIN_DATA
             try
             {
                 DELETEACCOUNT_J ins = JsonConvert.DeserializeObject<DELETEACCOUNT_J>(uId.Json);
-                SqlConnection con_New = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("DELETE FROM ACCOUNT " +
-                    "WHERE ID = '" + ins.Id + "'", con_New);
+                    "WHERE ID = '" + ins.Id + "'", con);
 
                 if (login(ins.Id, ins.Pw))
                 {
-                    con_New.Open();
+                    con.Open();
                     cmd.ExecuteNonQuery();
                     *_return_To_Client = SUCCED;
                 }
@@ -329,7 +331,8 @@ namespace LOGIN_DATA
             try
             {
                 EMAILVERTIFY_J ins = JsonConvert.DeserializeObject<EMAILVERTIFY_J>(uId.Json);
-                SqlCommand cmd = new SqlCommand("SELECT EMAIL FROM ACCOUNT " +
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
+                SqlCommand cmd = new SqlCommand("SELECT EMAIL, ID FROM ACCOUNT " +
                     "WHERE EMAIL='" + ins.Email + "'", con);
                 con.Open();
                 
@@ -342,7 +345,7 @@ namespace LOGIN_DATA
 
                 //첫번째에 이메일 주소
                 //두번째에 보내는사람이름
-                sbyte t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), "USER");
+                sbyte t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), rdr["ID"].ToString().Trim());
                 
                 if (t == -1)
                 {
@@ -354,6 +357,8 @@ namespace LOGIN_DATA
                     *_return_To_Client = SUCCED;
                     ++_return_To_Client;
                     *_return_To_Client = (byte)t;
+
+                    //이제 여기에 키 등록
                 }
             }
             catch (Exception)
@@ -381,6 +386,7 @@ namespace LOGIN_DATA
             try
             {
                 IDOVERLAP_J ins = JsonConvert.DeserializeObject<IDOVERLAP_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT ID " +
                     "FROM ACCOUNT WHERE ID='" + ins.Id + "'", con);
                 con.Open();
@@ -419,6 +425,7 @@ namespace LOGIN_DATA
             try
             {
                 NICKOVERLAP_J ins = JsonConvert.DeserializeObject<NICKOVERLAP_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT NICKNAME " +
                     "FROM ACCOUNT WHERE NICKNAME='" + ins.Nickname + "'", con);
                 con.Open();
@@ -457,6 +464,7 @@ namespace LOGIN_DATA
             try
             {
                 EMAILOVERLAP_J ins = JsonConvert.DeserializeObject<EMAILOVERLAP_J>(uId.Json);
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT EMAIL " +
                     "FROM ACCOUNT WHERE EMAIL='" + ins.Email + "'", con);
                 con.Open();
@@ -501,147 +509,5 @@ namespace LOGIN_DATA
 
             }
         }
-        /*
-        public static unsafe void SignUp(char* id, char* pw, char* email, char* nickname, bool* succed)
-        {
-            //새로 가입했을때 SQL문
-            //INSERT INTO ACCOUNT(ID, PW, EMAIL, NICKNAME)
-            //VALUES(, , , );
-            try
-            {
-                cmd = new SqlCommand("INSERT INTO ACCOUNT(ID, PW, EMAIL, NICKNAME) " +
-                "VALUES('" + (*id).ToString() + "','" + (*pw).ToString() + "','" +
-                (*email).ToString() + "' , '" + (*nickname).ToString() + "')", con);
-
-                con.Open();
-                cmd.ExecuteNonQuery();
-
-                *succed = true;
-            }
-            catch(Exception e)
-            {
-                *succed = false;
-            }
-
-        }
-
-
-        //아이디 찾기 SQL문 -> 아이디중복체크 / 로그인
-        //SELECT ID
-        //FROM ACCOUNT
-        //WHERE ID = 아이디입력
-        public static unsafe void Login(char* id, char* pw, bool* succed)
-        {
-            cmd = new SqlCommand("SELECT PW FROM ACCOUNT WHERE ID ='" + (*id).ToString() + "'", con);
-            con.Open();
-            cmd.ExecuteNonQuery();
-
-            SqlDataReader rdr = cmd.ExecuteReader();
-
-            rdr.Read();
-
-
-
-            foreach (char k in rdr["PW"].ToString())
-            {
-                if (k == (char)32) { break; }
-                if (k == *pw)
-                {
-                    Console.WriteLine(k);
-                    Console.WriteLine((int)pw);
-                    ++pw;
-                }
-                else //(k != *pww)
-                {
-                    //로그인 실패!
-                    *succed = false;
-                    break;
-                }
-            }
-
-            //사용후 닫음
-            rdr.Close();
-        }
-        public static unsafe void FindID(char* id, char* email, bool* succed)
-        {
-            cmd = new SqlCommand("SELECT ID FROM ACCOUNT WHERE EMAIL ='" + (*id).ToString() + "'", con);
-            con.Open();
-            cmd.ExecuteNonQuery();
-
-            SqlDataReader rdr = cmd.ExecuteReader();
-
-            rdr.Read();
-
-            foreach (char k in rdr["EMAIL"].ToString())
-            {
-                if (k == (char)32) { break; }
-                if (k == *email)
-                {
-                    Console.WriteLine((int)email);
-                    ++email;
-                }
-                else //(k != *pww)
-                {
-                    //로그인 실패!
-                    rdr.Close();
-                    *succed = false;
-                }
-            }
-        }
-        public static unsafe void FindPW(char* id, char* email, int* correct, bool* succed)
-        {
-
-        }
-        public static unsafe void ChangeID(char* id, char* new_id, bool* succed)
-        {
-
-        }
-        public static unsafe void ChangePW(char* id, char* new_pw, bool* succed)
-        {
-
-        }
-        public static unsafe void DeleteAccount(char* id, char* pw, bool* succed)
-        {
-
-        }
-        public static unsafe void id_Overlap(char* id, bool* succed)
-        {
-
-        }
-        public static unsafe void nick_Overlap(char* nickname, bool* succed)
-        {
-
-        }
-        public static unsafe void email_Overlap(char* email, bool* succed)
-        {
-
-        }
-        public static unsafe void isInputCorrect(int* correct, bool* succed)
-        {
-
-        }
-        //아이디 찾기 SQL문 -> EMAIL로 아이디 찾을때/이메일로 보낼때
-        //SELECT ID
-        //FROM ACCOUNT
-        //WHERE EMAIL = 입력된이메일
-
-        //패스워드 찾기 SQL문 -> 로그인
-        // SELECT PW
-        // FROM ACCOUNT
-        // WHERE PW = 비밀번호입력
-
-        //아이디 바꾸기 SQL문 -> 
-        //UPDATE ACCOUNT
-        //SET ID = 새아이디
-        //WHERE ID = 과거아이디
-
-        //비밀번호 바꾸기 SQL문 ->
-        //UPDATE ACCOUNT
-        //SET PW = 새아이디
-        //WHERE PW = 과거아이디
-
-        //계졍삭제(하기전에 아이디비밀번호 맞는지부터 체크)
-        //DELETE FROM ACCOUNT
-        //WHERE ID = 입력한아이디*/
     }
 }

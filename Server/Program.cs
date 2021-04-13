@@ -17,7 +17,7 @@ static class Program
     //60초에 한번씩 pop하기
     static void timer_Elapsed(object sender, ElapsedEventArgs e)
     {
-        Email_Vertify_Table.Destroy();
+        Email_Vertify_Table.destroy();
     }
 
     static void Main(string[] args)
@@ -29,6 +29,7 @@ static class Program
             timer.Interval = 60000; // 60000 = 60 초
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Start();
+
 
             using (Socket srvSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
@@ -75,7 +76,6 @@ static class Program
     {
         try
         {
-
             Socket _clntSocket = clntSocket as Socket;
 
             AsyncStateData data = new AsyncStateData();
@@ -166,7 +166,10 @@ static class Program
                 }
             }
             //보낼 데이터
-
+            Console.WriteLine(return_to_client[0]);
+            Console.WriteLine(return_to_client[1]);
+            Console.WriteLine(return_to_client[2]);
+            Console.WriteLine(return_to_client[3]);
             //byte[] sendBytes = Encoding.UTF8.GetBytes("hi");
             rcvData.Socket.BeginSend(return_to_client, 0, return_to_client.Length,
             SocketFlags.None, asyncSendCallback, rcvData.Socket);
