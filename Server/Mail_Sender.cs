@@ -7,7 +7,6 @@ using System.ComponentModel;
 
 namespace Login_Server
 {
-    
     class Mail_Sender
     {
         private Random random = new Random();
@@ -24,7 +23,7 @@ namespace Login_Server
                 Password = "swcontents#2"
             }
         };
-        public sbyte send_Mail(string _email, string _nickname)
+        public int send_Mail(string _email, string _nickname)
         {
             //111,111 ~ 999,999사이의 숫자를 return
             int vertinum = random.Next(111111, 999999);
@@ -48,7 +47,7 @@ namespace Login_Server
                 Client.SendMailAsync(message);
                 //메일을 실제로 보내는 부분
                 //Client.Send(message);
-                return Email_Vertify_Table.add_Item(vertinum);
+                return vertinum;
             }
             catch (Exception)
             {

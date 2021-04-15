@@ -11,12 +11,17 @@ namespace LOGIN_DATA
 {
     static class LOGIN_SQL
     {
-        static Mail_Sender ms = new Mail_Sender();
+        static Mail_Sender ms;
         private const byte SUCCED = 1;
         private const byte FAIL = 0;
 
-
+        
         static SqlConnection con;
+
+        public static void boot()
+        {
+            ms = new Mail_Sender();
+        }
 
         [Serializable]
         private class SIGNUP_J
@@ -40,7 +45,7 @@ namespace LOGIN_DATA
                 SqlCommand cmd = new SqlCommand("INSERT INTO ACCOUNT(ID, PW, EMAIL, NICKNAME) " +
                     "VALUES('" + ins.Id + "', '" + ins.Pw + "', '" + ins.Email + "', '" + ins.Nickname + "');", con);
                 //cmd = new SqlCommand(uId.Json, con);
-
+                Console.WriteLine(ins.Nickname);
                 con.Open();
                 cmd.ExecuteNonQuery();
                 *_return_To_Client = SUCCED;
@@ -75,31 +80,34 @@ namespace LOGIN_DATA
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT PW " +
                     "FROM ACCOUNT WHERE ID='" + ins.Id + "'", con);
-                
+
                 con.Open();
-                Console.WriteLine(1);
+
                 cmd.ExecuteNonQuery();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
 
-
-                rdr.Read();
-
-                Console.WriteLine(rdr["PW"].ToString().Trim() + "|");
-                if (rdr["PW"].ToString().Trim().Equals(ins.Pw))
+                //아이디의 존재여부?
+                if (rdr.Read())
                 {
-                    Console.WriteLine("t");
-                    * _return_To_Client = SUCCED;
+                    //비밀번호와 매치하는가?
+                    Console.WriteLine(rdr["PW"].ToString().Trim() + "|");
+                    if (rdr["PW"].ToString().Trim().Equals(ins.Pw))
+                    {
+                        *_return_To_Client = SUCCED;
+                    }
+                    else
+                    {
+                        *_return_To_Client = FAIL;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("F");
                     *_return_To_Client = FAIL;
                 }
-            }
-            catch(Exception e)
+            }  
+            catch(Exception)
             {
-                Console.WriteLine(e);
                 *_return_To_Client = FAIL;
             }
             finally
@@ -123,12 +131,17 @@ namespace LOGIN_DATA
 
 
 
-                rdr.Read();
-
-                Console.WriteLine(rdr["PW"].ToString().Trim() + "a");
-                if (rdr["PW"].ToString().Trim().Equals(pw))
+                if (rdr.Read())
                 {
-                    return true;
+                    Console.WriteLine(rdr["PW"].ToString().Trim() + "a");
+                    if (rdr["PW"].ToString().Trim().Equals(pw))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -167,15 +180,22 @@ namespace LOGIN_DATA
                 cmd.ExecuteNonQuery();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
-
-                rdr.Read();
-                *_return_To_Client = SUCCED;
-                ++_return_To_Client;
-                foreach(byte p in Encoding.UTF8.GetBytes(rdr["ID"].ToString().Trim()))
+                
+                if (rdr.Read())
                 {
-                    
-                    *_return_To_Client = p;
+                    *_return_To_Client = SUCCED;
                     ++_return_To_Client;
+                    //UTF8 = byte배열 2칸차지
+                    byte k = (byte)rdr["ID"].ToString().Trim().Length;
+                    foreach (byte p in Encoding.UTF8.GetBytes(rdr["ID"].ToString().Trim().Substring(0, k-3)+"***"))
+                    {
+                        *_return_To_Client = p;
+                        ++_return_To_Client;
+                    }
+                }
+                else
+                {
+                    *_return_To_Client = FAIL;
                 }
             }
             catch (Exception)
@@ -231,30 +251,34 @@ namespace LOGIN_DATA
             private string id;
             private string pw;
             private string new_Pw;
-            private string key;
+            private ushort key;
 
             public string Id { get => id; set => id = value; }
             public string Pw { get => pw; set => pw = value; }
             public string New_Pw { get => new_Pw; set => new_Pw = value; }
-            public string Key { get => key; set => key = value; }
+            public ushort Key { get => key; set => key = value; }
         }
         public static unsafe void change_Pw(User_Identity uId, byte*  _return_To_Client)
         {
             try
             {
                 CHANGEPW_J ins = JsonConvert.DeserializeObject<CHANGEPW_J>(uId.Json);
-                //if (uId.Key)
-                //{
-
-                //}
+                
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
                         "SET PW='" + ins.New_Pw + "' WHERE ID='" + ins.Id + "'", con);
-                if (login(ins.Id, ins.Pw))
+                if(Email_Succed_Table.search_Succed_List(ins.Key, uId.Ip_Addr))
                 {
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    *_return_To_Client = SUCCED;
+                    if (login(ins.Id, ins.Pw))
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        *_return_To_Client = SUCCED;
+                    }
+                    else
+                    {
+                        *_return_To_Client = FAIL;
+                    }
                 }
                 else
                 {
@@ -345,7 +369,7 @@ namespace LOGIN_DATA
 
                 //첫번째에 이메일 주소
                 //두번째에 보내는사람이름
-                sbyte t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), rdr["ID"].ToString().Trim());
+                int t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), rdr["ID"].ToString().Trim());
                 
                 if (t == -1)
                 {
@@ -353,12 +377,18 @@ namespace LOGIN_DATA
                 }
                 else
                 {
+                    sbyte _cursor = Email_Vertify_Table.add_Item(t);
                     //t는 100을 넘지 못함
-                    *_return_To_Client = SUCCED;
-                    ++_return_To_Client;
-                    *_return_To_Client = (byte)t;
-
-                    //이제 여기에 키 등록
+                    if (_cursor > -1)
+                    {
+                        *_return_To_Client = SUCCED;
+                        ++_return_To_Client;
+                        *_return_To_Client = (byte)_cursor;
+                    }
+                    else
+                    {
+                        *_return_To_Client = FAIL;
+                    }
                 }
             }
             catch (Exception)
@@ -494,11 +524,22 @@ namespace LOGIN_DATA
         {
             try
             {
-                if (uId.getVerti() == Email_Vertify_Table.find(uId.getCursor()))
+                if (Email_Vertify_Table.find(uId.getCursor(), uId.getVerti()))
                 {
-                    *_return_To_Client = SUCCED;
+                    sbyte[] key = Email_Succed_Table.add_Succed_List(uId.Ip_Addr);
+                    if (key[0] != -1)
+                    {
+                        *_return_To_Client = SUCCED;
+                        ++_return_To_Client;
+                        *_return_To_Client = (byte)key[0];
+                        ++_return_To_Client;
+                        *_return_To_Client = (byte)key[1];
+                    }
+                    else
+                    {
+                        *_return_To_Client = FAIL;
+                    }
                 }
-                
             }
             catch (Exception)
             {

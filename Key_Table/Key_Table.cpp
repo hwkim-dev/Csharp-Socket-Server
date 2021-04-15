@@ -1,40 +1,55 @@
 ﻿#include "pch.h"
-#include "Email_Verify_Table.h"
-
-#include <iostream>
+#include "Key_Table.h"
 
 #define TIMER 3
 #define SIZE 100
+#define KEYSIZE 5
 
 namespace Key_Tabledll
 {
-	int** table;
+	int** table = new int* [TIMER];
+
+	int key[KEYSIZE];
 	const __int8 FAIL{ -1 };
 	const __int8 RESETVAL{ 0 };
-	__int8 cursor{ 0 };
-	__int8 time{ 0 };
+	__int8 cursor = 0;
+	__int8 time = 0;
 	std::mutex mtx;
+
+
+	void booting()
+	{
+		std::cout << "Loading Key_Table..." << std::endl;
+		for (int c = 0; c < TIMER; ++c)
+		{
+			table[c] = new int[SIZE];
+		}
+		cursor = 0;
+		time = 0;
+	}
+
 	__int8 add_Item(int verti_num)
 	{
-		mtx.lock();
+		//mtx.lock();
 		try
 		{
 			table[time][cursor] = verti_num;
-			return cursor;
+			//mtx.unlock();
+			return ++cursor - 1;
 		}
 		catch (int wrong)
 		{
+			std::cout << "ERROR!" << std::endl;
 			return FAIL;
 		}
-		mtx.unlock();
-		return 1;
+
 	}
 
-	int find(unsigned __int8 _cursor)
+	int find(unsigned char _cursor)
 	{
 		try
 		{
-			return (int)table[time][_cursor];
+			return table[time][_cursor];
 		}
 		catch (char e)
 		{

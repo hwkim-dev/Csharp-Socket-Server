@@ -24,9 +24,6 @@
     <ClInclude Include="Key_Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Email_Verify_Table.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -35,7 +32,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Email_Vertify_Table.cpp">
+    <ClCompile Include="Key_Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

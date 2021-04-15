@@ -8,12 +8,13 @@ namespace Login_Server
     {
         private string json;
         private byte fn;
+        private string ip_Addr;
         public byte type() { return Fn; }
         //public int Json_Leng_Nofn() { return (json.Length - 8); }
 
         public string Json { get => json; set => json = value; }
         public byte Fn { get => fn; set => fn = value; }
-
+        public string Ip_Addr { get => ip_Addr; set => ip_Addr = value; }
         public byte getCursor()
         {
             return Byte.Parse(json.Substring(6, json.Length - 6));
