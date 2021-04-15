@@ -1,6 +1,13 @@
 # Server
-Lang > C# /
-Asynchronous Tcp/Ip Server to connect to my Unity game
+Lang > C# 
+<br>
+Asynchronous Tcp/Ip Server to connect to my Csharp-Socket-Server
+<br>
+<a href="https://github.com/hwkim-dev/Csharp-Socket-Server">My Csharp-Socket-Server Project</a>
 
-Project compiled in an x64 environment
-So, x86_64 environment is required.
+
+Prerequisites:
+<ul>
+<li>Computers with x86-64 CPU</li>
+<li>Windows 7 or newer</li>
+</ul>
