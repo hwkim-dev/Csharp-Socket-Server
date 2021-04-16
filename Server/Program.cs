@@ -22,8 +22,9 @@ namespace LOGIN_DATA
         //60초에 한번씩 pop하기
         static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Email_Vertify_Table.destroy();
+            //Email_Vertify_Table.destroy();
             //Key_Table.key_Expires();
+            Email_Succed_Table.destroy();
         }
         static void time_T(object inst)
         {
@@ -37,12 +38,14 @@ namespace LOGIN_DATA
             try
             {
                 Console.WriteLine("Starting Server....");
-                Email_Vertify_Table.boot();
-                LOGIN_SQL.boot();
-
                 Thread time_Th = new Thread(time_T);
                 time_Th.Start();
-
+                Email_Succed_Table.boot();
+                Email_Vertify_Table.boot();
+                sbyte[] hi = Email_Succed_Table.add_Succed_List("182.168.4.2");
+                Console.WriteLine(hi[0] + "|" + hi[1]);
+                Console.WriteLine(Email_Succed_Table.search_Succed_List((byte)hi[0], "182.168.4.2"));
+                LOGIN_SQL.boot();
 
             using (Socket srvSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))

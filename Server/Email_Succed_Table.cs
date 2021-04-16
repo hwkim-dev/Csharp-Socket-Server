@@ -19,7 +19,7 @@ namespace Login_Server
 
         private static ushort now_Cursor = 0;
         private static string[,] succedList;
-        
+
         private static readonly byte TABLECOUNTS = 7;
         private static readonly byte TABLEUSERS = 60;
         public static void boot()
@@ -37,9 +37,10 @@ namespace Login_Server
                 //return 되는 cursor 는 (cursor +1 -1 = cursor)
                 cursor[0] = (sbyte)(SUCCED_TIMER[time_Now] >> 8);
                 cursor[1] = (sbyte)(++now_Cursor - 1);
+                ++key_Length_List[time_Now];
                 return cursor;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 cursor[0] = -1;
                 return cursor;
@@ -50,7 +51,7 @@ namespace Login_Server
         public static bool search_Succed_List(ushort _key, string Ip)
         {
             int current_Key = 0;
-            foreach(ushort item in SUCCED_TIMER)
+            foreach (ushort item in SUCCED_TIMER)
             {
                 //0b_0000_0000_0000_0000,
                 //0b_0010_0000_0000_0000,
@@ -62,11 +63,13 @@ namespace Login_Server
                 }
                 else
                 {
-                    current_Key = item;
+                    current_Key = item / 8192;
+                    break;
                 }
             }
             _key = (ushort)(_key % 4096);
-            if(Ip.Equals(succedList[current_Key, _key]))
+
+            if (Ip.Equals(succedList[current_Key, _key]))
             {
                 return true;
             }
@@ -74,12 +77,12 @@ namespace Login_Server
             {
                 return false;
             }
-            
+
         }
         private static ushort future_byte;
         public static void destroy()
         {
-            future_byte = (ushort)((time_Now+1) % TABLECOUNTS);
+            future_byte = (ushort)((time_Now + 1) % TABLECOUNTS);
             key_Length_List[time_Now] = now_Cursor;
             now_Cursor = 0;
             try
@@ -88,9 +91,10 @@ namespace Login_Server
                 {
                     succedList[time_Now, key_Length_List[future_byte]] = "\0";
                     --key_Length_List[future_byte];
-                } while (now_Cursor >= 0);
-                ++key_Length_List[future_byte];
-            } 
+                    //의도된 오버플로우
+                } while (key_Length_List[future_byte] != ushort.MaxValue);
+                key_Length_List[future_byte] = 0;
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message + "cursor=" + now_Cursor);
@@ -99,8 +103,8 @@ namespace Login_Server
             {
 
             }
-            
-            
+
+
             time_Now = (ushort)((++time_Now) % TABLECOUNTS);
         }
     }

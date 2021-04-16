@@ -38,12 +38,22 @@ static class Email_Vertify_Table
             {
                 table[time, cursor] = verti_num;
                 ++cursor;
+                ++cursor_Table[time];
                 return cursor;
             }
             catch (Exception)
             {
-                ++cursor;
-                return -1;
+                if (table[time, cursor] == verti_num)
+                {
+                    return -1;
+                }
+                else
+                {
+                    //어디서 try catch문이 발생했는지 알기위해
+                    //오류가 생긴 부분은 pass 아이템을 더할때 다음 배열에 접근
+                    ++cursor;
+                    return -1;
+                }
             }
             finally
             {
@@ -95,10 +105,9 @@ static class Email_Vertify_Table
                 //O(N)시간 소요
                 table[cursor_Table[future_byte], cursor_Table[time]] = 0;
                 --cursor_Table[time];
-            } while (cursor >= 0);
-            //다음에 사용하기 위해 cursor를 0으로 만들어줌
-            ++cursor_Table[time];
-            //++cursor 아님..
+            } while (cursor_Table[time] >= 0);
+            //다음에 사용하기 위해 cursor_Table을 0으로 만들어줌
+            cursor_Table[time] = 0;
         }
         catch (Exception e)
         {
