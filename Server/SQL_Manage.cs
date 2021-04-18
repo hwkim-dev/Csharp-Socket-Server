@@ -45,7 +45,7 @@ namespace LOGIN_DATA
                 SqlCommand cmd = new SqlCommand("INSERT INTO ACCOUNT(ID, PW, EMAIL, NICKNAME) " +
                     "VALUES('" + ins.Id + "', '" + ins.Pw + "', '" + ins.Email + "', '" + ins.Nickname + "');", con);
                 //cmd = new SqlCommand(uId.Json, con);
-                Console.WriteLine(ins.Nickname);
+
                 con.Open();
                 cmd.ExecuteNonQuery();
                 *_return_To_Client = SUCCED;
@@ -91,7 +91,6 @@ namespace LOGIN_DATA
                 if (rdr.Read())
                 {
                     //비밀번호와 매치하는가?
-                    Console.WriteLine(rdr["PW"].ToString().Trim() + "|");
                     if (rdr["PW"].ToString().Trim().Equals(ins.Pw))
                     {
                         *_return_To_Client = SUCCED;
@@ -133,7 +132,6 @@ namespace LOGIN_DATA
 
                 if (rdr.Read())
                 {
-                    Console.WriteLine(rdr["PW"].ToString().Trim() + "a");
                     if (rdr["PW"].ToString().Trim().Equals(pw))
                     {
                         return true;
@@ -263,11 +261,13 @@ namespace LOGIN_DATA
             try
             {
                 CHANGEPW_J ins = JsonConvert.DeserializeObject<CHANGEPW_J>(uId.Json);
-                
+
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\hyunwoo\source\repos\Server\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
                         "SET PW='" + ins.New_Pw + "' WHERE ID='" + ins.Id + "'", con);
-                if(Email_Succed_Table.search_Succed_List(ins.Key, uId.Ip_Addr))
+
+
+                if (Email_Succed_Table.search_Succed_List(ins.Key, uId.get_Ip_Addr()))
                 {
                     if (login(ins.Id, ins.Pw))
                     {
@@ -510,6 +510,7 @@ namespace LOGIN_DATA
                     *_return_To_Client = FAIL;
                 }
                 *_return_To_Client = SUCCED;
+                
             }
             catch (Exception)
             {
@@ -522,11 +523,14 @@ namespace LOGIN_DATA
         }
         public static unsafe void email_Verti_Correct(User_Identity uId, byte*  _return_To_Client)
         {
+            
             try
             {
+                //여기서 fail이 리턴되는 문제가 발생하고있다.
                 if (Email_Vertify_Table.find(uId.getCursor(), uId.getVerti()))
                 {
-                    sbyte[] key = Email_Succed_Table.add_Succed_List(uId.Ip_Addr);
+                    sbyte[] key = Email_Succed_Table.add_Succed_List(uId.get_Ip_Addr());
+                    
                     if (key[0] != -1)
                     {
                         *_return_To_Client = SUCCED;
@@ -540,8 +544,12 @@ namespace LOGIN_DATA
                         *_return_To_Client = FAIL;
                     }
                 }
+                else
+                {
+                    *_return_To_Client = FAIL;
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 *_return_To_Client = FAIL;
             }

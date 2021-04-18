@@ -39,7 +39,7 @@ static class Email_Vertify_Table
                 table[time, cursor] = verti_num;
                 ++cursor;
                 ++cursor_Table[time];
-                return cursor;
+                return (sbyte)(cursor - 1);
             }
             catch (Exception)
             {

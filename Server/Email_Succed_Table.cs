@@ -32,11 +32,14 @@ namespace Login_Server
             sbyte[] cursor = new sbyte[2];
             try
             {
+                Console.WriteLine(time_Now);
+                Console.WriteLine(now_Cursor);
                 succedList[time_Now, now_Cursor] = ip;
                 //now_Cursor 는 더하고
                 //return 되는 cursor 는 (cursor +1 -1 = cursor)
                 cursor[0] = (sbyte)(SUCCED_TIMER[time_Now] >> 8);
                 cursor[1] = (sbyte)(++now_Cursor - 1);
+
                 ++key_Length_List[time_Now];
                 return cursor;
             }
@@ -45,39 +48,54 @@ namespace Login_Server
                 cursor[0] = -1;
                 return cursor;
             }
+            finally
+            {
+
+            }
         }
 
         //return IpAddress
         public static bool search_Succed_List(ushort _key, string Ip)
         {
-            int current_Key = 0;
-            foreach (ushort item in SUCCED_TIMER)
+            try
             {
-                //0b_0000_0000_0000_0000,
-                //0b_0010_0000_0000_0000,
-                //실제 키가 들어가는곳은
-                //뒤의 12자리이다
-                if (item < _key)
+                int current_Key = 0;
+                foreach (ushort item in SUCCED_TIMER)
                 {
+                    //0b_0000_0000_0000_0000,
+                    //0b_0010_0000_0000_0000,
+                    //실제 키가 들어가는곳은
+                    //뒤의 12자리이다
+                    if (item < _key)
+                    {
 
+                    }
+                    else
+                    {
+                        current_Key = item / 8192;
+                        break;
+                    }
+                }
+                _key = (ushort)(_key % 4096);
+                
+                Console.WriteLine(succedList[0, 0]);
+                if (Ip.Equals(succedList[current_Key, _key]))
+                {
+                    return true;
                 }
                 else
                 {
-                    current_Key = item / 8192;
-                    break;
+                    return false;
                 }
             }
-            _key = (ushort)(_key % 4096);
-
-            if (Ip.Equals(succedList[current_Key, _key]))
-            {
-                return true;
-            }
-            else
+            catch (Exception)
             {
                 return false;
             }
+            finally
+            {
 
+            }
         }
         private static ushort future_byte;
         public static void destroy()

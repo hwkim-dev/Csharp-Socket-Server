@@ -39,15 +39,15 @@ namespace Login_Server
             };
 
             //메일 받는사람
-            message.To.Add(new MailAddress(_email, _nickname));
+            //message.To.Add(new MailAddress(_email, _nickname));
 
             try
             {
-                Client.SendCompleted += Client_sendCompleted;
-                Client.SendMailAsync(message);
+                //Client.SendCompleted += Client_sendCompleted;
+                //Client.SendMailAsync(message);
                 //메일을 실제로 보내는 부분
-                //Client.Send(message);
-                return vertinum;
+                //return vertinum;
+                return 111111;
             }
             catch (Exception)
             {

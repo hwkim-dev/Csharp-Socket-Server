@@ -29,7 +29,7 @@ namespace LOGIN_DATA
         static void time_T(object inst)
         {
             System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Interval = 6000; // 60000 = 60 초
+            timer.Interval = 60000; // 60000 = 60 초
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Start();
         }
@@ -42,9 +42,9 @@ namespace LOGIN_DATA
                 time_Th.Start();
                 Email_Succed_Table.boot();
                 Email_Vertify_Table.boot();
-                sbyte[] hi = Email_Succed_Table.add_Succed_List("182.168.4.2");
-                Console.WriteLine(hi[0] + "|" + hi[1]);
-                Console.WriteLine(Email_Succed_Table.search_Succed_List((byte)hi[0], "182.168.4.2"));
+                //sbyte[] hi = Email_Succed_Table.add_Succed_List("182.168.4.2");
+                //Console.WriteLine(hi[0] + "|" + hi[1]);
+                //Console.WriteLine(Email_Succed_Table.search_Succed_List((byte)hi[0], "182.168.4.2"));
                 LOGIN_SQL.boot();
 
             using (Socket srvSocket =
@@ -60,7 +60,7 @@ namespace LOGIN_DATA
                     {
                         //Accept input
                         Socket clntSocket = srvSocket.Accept();
-                        Console.WriteLine(clntSocket.RemoteEndPoint.ToString());
+                        //Console.WriteLine(clntSocket.RemoteEndPoint.ToString());
                         
                         ThreadPool.QueueUserWorkItem(accept, clntSocket);
                     }
@@ -95,6 +95,10 @@ namespace LOGIN_DATA
             {
                 Console.WriteLine("ERROR! : Unable to Receive Data");
             }
+            finally
+            {
+
+            }
         }
 
         //클라이언트에게 넘겨주기
@@ -117,7 +121,8 @@ namespace LOGIN_DATA
                 uId.Fn = rcvData.Buffer[0];
                 Console.WriteLine(Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv));
 
-                uId.Ip_Addr = rcvData.Ip;
+                uId.set_Ip_Addr = rcvData.Ip;
+                Console.WriteLine("IP:" + uId.get_Ip_Addr());
 
                 //getString___From rcvData.Buffer -> <n ~ nRecv>
                 uId.Json = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
@@ -145,6 +150,10 @@ namespace LOGIN_DATA
             {
 
             }
+            finally
+            {
+
+            }
         }
 
         //소켓으로 보내고 소켓 닫기
@@ -160,6 +169,10 @@ namespace LOGIN_DATA
                 socket.Close();
             }
             catch (Exception)
+            {
+
+            }
+            finally
             {
 
             }
