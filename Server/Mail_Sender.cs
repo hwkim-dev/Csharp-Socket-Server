@@ -27,7 +27,6 @@ namespace Login_Server
         {
             //111,111 ~ 999,999사이의 숫자를 return
             int vertinum = random.Next(111111, 999999);
-            Console.WriteLine(_email+" + "+ _nickname);
             MailMessage message = new MailMessage()
             {
                 //보내는사람
@@ -39,15 +38,14 @@ namespace Login_Server
             };
 
             //메일 받는사람
-            //message.To.Add(new MailAddress(_email, _nickname));
+            message.To.Add(new MailAddress(_email, _nickname));
 
             try
             {
-                //Client.SendCompleted += Client_sendCompleted;
-                //Client.SendMailAsync(message);
+                Client.SendCompleted += Client_sendCompleted;
+                Client.SendMailAsync(message);
                 //메일을 실제로 보내는 부분
-                //return vertinum;
-                return 111111;
+                return vertinum;
             }
             catch (Exception)
             {

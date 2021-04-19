@@ -24,16 +24,29 @@ namespace Login_Server
         private static readonly byte TABLEUSERS = 60;
         public static void boot()
         {
-            succedList = new string[TABLECOUNTS, TABLEUSERS];
-            key_Length_List = new ushort[TABLECOUNTS];
+            try
+            {
+                succedList = new string[TABLECOUNTS, TABLEUSERS];
+                key_Length_List = new ushort[TABLECOUNTS];
+                Console.WriteLine("Email Succed Table Loaded");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("!!!Email Succed Table Loading Failed!!!");
+                Console.WriteLine("<Email Succed Table Error>");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("<Email Succed Table Error>");
+            }
+            finally
+            {
+
+            }
         }
         public static sbyte[] add_Succed_List(string ip)
         {
             sbyte[] cursor = new sbyte[2];
             try
             {
-                Console.WriteLine(time_Now);
-                Console.WriteLine(now_Cursor);
                 succedList[time_Now, now_Cursor] = ip;
                 //now_Cursor 는 더하고
                 //return 되는 cursor 는 (cursor +1 -1 = cursor)
@@ -78,7 +91,6 @@ namespace Login_Server
                 }
                 _key = (ushort)(_key % 4096);
                 
-                Console.WriteLine(succedList[0, 0]);
                 if (Ip.Equals(succedList[current_Key, _key]))
                 {
                     return true;

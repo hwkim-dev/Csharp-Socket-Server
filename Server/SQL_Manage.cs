@@ -20,7 +20,23 @@ namespace LOGIN_DATA
 
         public static void boot()
         {
-            ms = new Mail_Sender();
+            try
+            {
+                ms = new Mail_Sender();
+
+                Console.WriteLine("Login SQL Loaded");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("!!!Login SQL Loading Failed!!!");
+                Console.WriteLine("<Login SQL Error>");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("<Login SQL Error>");
+            }
+            finally
+            {
+
+            }
         }
 
         [Serializable]
@@ -247,12 +263,10 @@ namespace LOGIN_DATA
         private class CHANGEPW_J
         {
             private string id;
-            private string pw;
             private string new_Pw;
             private ushort key;
 
             public string Id { get => id; set => id = value; }
-            public string Pw { get => pw; set => pw = value; }
             public string New_Pw { get => new_Pw; set => new_Pw = value; }
             public ushort Key { get => key; set => key = value; }
         }
@@ -269,16 +283,9 @@ namespace LOGIN_DATA
 
                 if (Email_Succed_Table.search_Succed_List(ins.Key, uId.get_Ip_Addr()))
                 {
-                    if (login(ins.Id, ins.Pw))
-                    {
-                        con.Open();
-                        cmd.ExecuteNonQuery();
-                        *_return_To_Client = SUCCED;
-                    }
-                    else
-                    {
-                        *_return_To_Client = FAIL;
-                    }
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    *_return_To_Client = SUCCED;
                 }
                 else
                 {
@@ -369,8 +376,7 @@ namespace LOGIN_DATA
 
                 //첫번째에 이메일 주소
                 //두번째에 보내는사람이름
-                int t = (sbyte)ms.send_Mail(rdr["EMAIL"].ToString().Trim(), rdr["ID"].ToString().Trim());
-                
+                int t = ms.send_Mail(rdr["EMAIL"].ToString().Trim(), rdr["ID"].ToString().Trim());
                 if (t == -1)
                 {
                     *_return_To_Client = FAIL;
@@ -523,7 +529,6 @@ namespace LOGIN_DATA
         }
         public static unsafe void email_Verti_Correct(User_Identity uId, byte*  _return_To_Client)
         {
-            
             try
             {
                 //여기서 fail이 리턴되는 문제가 발생하고있다.

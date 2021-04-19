@@ -23,8 +23,25 @@ static class Email_Vertify_Table
 
     public static void boot()
     {
-        cursor_Table = new sbyte[TABLECOUNTS];
-        table = new int[TABLECOUNTS, TABLEUSERS];
+        try
+        {
+            cursor_Table = new sbyte[TABLECOUNTS];
+            table = new int[TABLECOUNTS, TABLEUSERS];
+
+            Console.WriteLine("Email Vertify Table Loaded");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("!!!Email Vertify Table Loading Failed!!!");
+            Console.WriteLine("<Email Vertify Table Error>");
+            Console.WriteLine(e.Message);
+            Console.WriteLine("<Email Vertify Table Error>");
+        }
+        finally
+        {
+
+        }
+        
     }
 
     

@@ -38,23 +38,24 @@ namespace LOGIN_DATA
             try
             {
                 Console.WriteLine("Starting Server....");
+                Console.WriteLine("Time : " + DateTime.Now+"\n");
                 Thread time_Th = new Thread(time_T);
                 time_Th.Start();
+                Console.WriteLine("Timer Loaded");
                 Email_Succed_Table.boot();
                 Email_Vertify_Table.boot();
-                //sbyte[] hi = Email_Succed_Table.add_Succed_List("182.168.4.2");
-                //Console.WriteLine(hi[0] + "|" + hi[1]);
-                //Console.WriteLine(Email_Succed_Table.search_Succed_List((byte)hi[0], "182.168.4.2"));
                 LOGIN_SQL.boot();
 
-            using (Socket srvSocket =
+                
+
+                using (Socket srvSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
                     srvSocket.Bind(endPoint);
                     
                     srvSocket.Listen(10);
-                    Console.WriteLine("Server is running");
+                    Console.WriteLine("\nServer is running");
                     Console.WriteLine("Time : " + DateTime.Now);
                     while (true)
                     {
@@ -119,15 +120,14 @@ namespace LOGIN_DATA
 
                 //Form function
                 uId.Fn = rcvData.Buffer[0];
-                Console.WriteLine(Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv));
 
                 uId.set_Ip_Addr = rcvData.Ip;
-                Console.WriteLine("IP:" + uId.get_Ip_Addr());
+                Console.WriteLine("\n<New Connection Established>\n" +
+                    "IP : " + uId.get_Ip_Addr());
 
-                //getString___From rcvData.Buffer -> <n ~ nRecv>
                 uId.Json = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
                 
-
+                
                 Console.WriteLine(uId.Json);
 
                 unsafe
@@ -137,18 +137,17 @@ namespace LOGIN_DATA
                         Form.chech_From(uId, _return_to_client);
                     }
                 }
-                //보낼 데이터
-                //for (int i = 0; i < return_to_client.Length; i++)
-                //{
-                //    Console.WriteLine(return_to_client[i]);
-                //}
-                //byte[] sendBytes = Encoding.UTF8.GetBytes("hi");
+                
+
                 rcvData.Socket.BeginSend(return_to_client, 0, return_to_client.Length,
                 SocketFlags.None, asyncSendCallback, rcvData.Socket);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine("!!!Connection Error Occur!!!\n" +
+                    "<Connection Error>\n" +
+                    e.Message + "\n" +
+                    "<Connection Error>");
             }
             finally
             {
@@ -168,9 +167,12 @@ namespace LOGIN_DATA
                 //소켓 닫기
                 socket.Close();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine("!!!Callback Error Occur!!!");
+                Console.WriteLine("<Callback Error>");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("<Callback Error>");
             }
             finally
             {
