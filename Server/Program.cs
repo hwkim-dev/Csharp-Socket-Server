@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
+using System.IO;
 
 public class AsyncStateData
 {
@@ -14,7 +15,7 @@ public class AsyncStateData
     public string Ip;
 }
 
-namespace LOGIN_DATA
+namespace Server_Command
 {
     static class Program
     {
@@ -22,9 +23,10 @@ namespace LOGIN_DATA
         //60초에 한번씩 pop하기
         static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            Key_Table.timer_Call();
+
             //Email_Vertify_Table.destroy();
-            //Key_Table.key_Expires();
-            Email_Succed_Table.destroy();
+            //Email_Succed_Table.destroy();
         }
         static void time_T(object inst)
         {
@@ -37,32 +39,46 @@ namespace LOGIN_DATA
         {
             try
             {
+                {
+                    string myCom = Dns.GetHostName();
+
+                    IPHostEntry entry = Dns.GetHostEntry(myCom);
+                    foreach (IPAddress iPAddress in entry.AddressList)
+                    {
+                        Console.WriteLine(iPAddress.AddressFamily + ":" + iPAddress);
+                    }
+                }
                 Console.WriteLine("Starting Server....");
-                Console.WriteLine("Time : " + DateTime.Now+"\n");
+                Console.WriteLine("Time : " + DateTime.Now + "\n");
                 Thread time_Th = new Thread(time_T);
                 time_Th.Start();
                 Console.WriteLine("Timer Loaded");
-                Email_Succed_Table.boot();
-                Email_Vertify_Table.boot();
+                Key_Table.boot();
+                //ip_Ban_List.boot();
                 LOGIN_SQL.boot();
+                Form.boot();
 
-                
+
 
                 using (Socket srvSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
-                    srvSocket.Bind(endPoint);
                     
-                    srvSocket.Listen(10);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
+                    
+                    srvSocket.Bind(endPoint);
+
+                    //접속가능 최대 클라이언트
+                    srvSocket.Listen(10000);
                     Console.WriteLine("\nServer is running");
                     Console.WriteLine("Time : " + DateTime.Now);
                     while (true)
                     {
                         //Accept input
                         Socket clntSocket = srvSocket.Accept();
-                        //Console.WriteLine(clntSocket.RemoteEndPoint.ToString());
                         
+                        //Console.WriteLine(clntSocket.RemoteEndPoint.ToString());
+
                         ThreadPool.QueueUserWorkItem(accept, clntSocket);
                     }
                 }
@@ -82,7 +98,7 @@ namespace LOGIN_DATA
             try
             {
                 Socket _clntSocket = clntSocket as Socket;
-                
+
                 AsyncStateData data = new AsyncStateData();
                 data.Buffer = new byte[128];
                 data.Socket = _clntSocket;
@@ -101,7 +117,7 @@ namespace LOGIN_DATA
 
             }
         }
-
+        //헤더정의. 
         //클라이언트에게 넘겨주기
         private static void asyncReceiveCallback(IAsyncResult asyncResult)
         {
@@ -112,8 +128,7 @@ namespace LOGIN_DATA
                 //받은데이터 길이
                 int nRecv = rcvData.Socket.EndReceive(asyncResult);
 
-                //클라이언트에게 보낼 값
-                byte[] return_to_client = new byte[50];
+                
 
                 //스레드 끼리 겹치지 않기 위해 스레드가 생성된 후에 새 클래스 생성
                 User_Identity uId = new User_Identity();
@@ -126,15 +141,41 @@ namespace LOGIN_DATA
                     "IP : " + uId.get_Ip_Addr());
 
                 uId.Json = Encoding.UTF8.GetString(rcvData.Buffer, 1, nRecv);
-                
-                
+
+
                 Console.WriteLine(uId.Json);
+
+                // 1 / 38 / 13 / 1 / 1 / 1 / 3 / 1 / 1 / 1 / 1 / 
+                //로그인 -> return_to_client = new byte[50];
+                //
+
+                /*
+                //클라이언트에게 보낼 값
+                byte[] return_to_client;
+                switch(uId.type())
+                {
+                    case (byte)SendFormCode.LOGIN:
+                        return_to_client = new byte[26];
+                        break;
+                    case (byte)SendFormCode.FINDID:
+                        return_to_client = new byte[13];
+                        break;
+                    case (byte)SendFormCode.EMAILVERTIFY:
+                        return_to_client = new byte[3];
+                        break;
+                    default:
+                        return_to_client = new byte[1];
+                        break;
+                }
+                */
+                byte[] return_to_client = new byte[100];
 
                 unsafe
                 {
                     fixed (byte* _return_to_client = return_to_client)
                     {
-                        Form.chech_From(uId, _return_to_client);
+                        //Form.chech_From(uId, _return_to_client);
+                        Form.fm[uId.type()].excute(uId, _return_to_client);
                     }
                 }
                 
@@ -179,5 +220,7 @@ namespace LOGIN_DATA
 
             }
         }
+
+        
     }
 }

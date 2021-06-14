@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.IO;
@@ -39,7 +40,6 @@ namespace Login_Server
 
             //메일 받는사람
             message.To.Add(new MailAddress(_email, _nickname));
-
             try
             {
                 Client.SendCompleted += Client_sendCompleted;
@@ -62,3 +62,6 @@ namespace Login_Server
         }
     }
 }
+
+
+

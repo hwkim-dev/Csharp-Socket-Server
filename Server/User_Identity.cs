@@ -9,6 +9,9 @@ namespace Login_Server
         private string json;
         private byte fn;
         private string ip_Addr;
+        //private unsafe byte[] _return_to_client;
+
+        
         public byte type() { return Fn; }
         //public int Json_Leng_Nofn() { return (json.Length - 8); }
 
@@ -29,14 +32,11 @@ namespace Login_Server
             }
             return ip;
         }
-        public string set_Ip_Addr{ set => ip_Addr = value; }
-        public byte getCursor()
-        {
-            return Byte.Parse(json.Substring(6, json.Length - 6));
-        }
-        public int getVerti()
-        {
-            return Int32.Parse(json.Substring(0, 6));
-        }
+        public string set_Ip_Addr { set => ip_Addr = value; }
     }
 }
+
+
+
+
+
