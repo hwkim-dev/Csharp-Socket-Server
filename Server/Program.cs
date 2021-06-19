@@ -63,9 +63,9 @@ namespace Server_Command
                 using (Socket srvSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    
+
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11200);
-                    
+
                     srvSocket.Bind(endPoint);
 
                     //접속가능 최대 클라이언트
@@ -76,7 +76,7 @@ namespace Server_Command
                     {
                         //Accept input
                         Socket clntSocket = srvSocket.Accept();
-                        
+
                         //Console.WriteLine(clntSocket.RemoteEndPoint.ToString());
 
                         ThreadPool.QueueUserWorkItem(accept, clntSocket);
@@ -128,7 +128,7 @@ namespace Server_Command
                 //받은데이터 길이
                 int nRecv = rcvData.Socket.EndReceive(asyncResult);
 
-                
+
 
                 //스레드 끼리 겹치지 않기 위해 스레드가 생성된 후에 새 클래스 생성
                 User_Identity uId = new User_Identity();
@@ -178,7 +178,7 @@ namespace Server_Command
                         Form.fm[uId.type()].excute(uId, _return_to_client);
                     }
                 }
-                
+
 
                 rcvData.Socket.BeginSend(return_to_client, 0, return_to_client.Length,
                 SocketFlags.None, asyncSendCallback, rcvData.Socket);
@@ -221,6 +221,6 @@ namespace Server_Command
             }
         }
 
-        
+
     }
 }

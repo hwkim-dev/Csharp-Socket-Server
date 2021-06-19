@@ -35,13 +35,13 @@ namespace Login_Server
     {
         CHECKPW = 0b10000000,
     }
-    
+
     static class Form
     {
         public abstract class form_Manage
         {
             public abstract unsafe void excute(User_Identity uId, byte* _return_to_client);
-            
+
         }
         class SIGNUP : form_Manage
         {
@@ -134,7 +134,7 @@ namespace Login_Server
                 LOGIN_SQL.diamond_update(uId, _return_to_client);
             }
         }
-       
+
         class RUBYUPDATE : form_Manage
         {
             public override unsafe void excute(User_Identity uId, byte* _return_to_client)
@@ -142,7 +142,7 @@ namespace Login_Server
                 LOGIN_SQL.ruby_update(uId, _return_to_client);
             }
         }
-        
+
         class PWEMAILSELECT : form_Manage
         {
             public override unsafe void excute(User_Identity uId, byte* _return_to_client)
@@ -204,7 +204,7 @@ namespace Login_Server
 
             }
         }
-        
+
 
         //fm[uId.type()].(uId, _return_to_client);
 

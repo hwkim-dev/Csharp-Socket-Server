@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Server_Command
 {
-   
+
     static class Log_File
     {
         public static string GetDateTime()
@@ -49,7 +49,7 @@ namespace Server_Command
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -64,7 +64,7 @@ namespace Server_Command
         private const int INT_TO_BYTE = 0b00000000_00000000_00000000_11111111;
 
 
-        static SqlConnection con;    
+        static SqlConnection con;
 
         public static void boot()
         {
@@ -113,7 +113,7 @@ namespace Server_Command
                 cmd.ExecuteNonQuery();
                 *_return_To_Client = SUCCED;
             }
-            catch (Exception e )
+            catch (Exception)
             {
                 *_return_To_Client = FAIL;
             }
@@ -199,7 +199,7 @@ namespace Server_Command
                                     ++_return_To_Client;
                                     *_return_To_Client = item;
                                 }
-                                
+
                                 /*
                                 ++_return_To_Client;
                                 int k = (int)rdr2["GOLD"];
@@ -279,7 +279,7 @@ namespace Server_Command
                     }
                 }
             }
-          
+
             catch (Exception)
             {
                 *_return_To_Client = FAIL;
@@ -443,12 +443,12 @@ namespace Server_Command
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\h\Desktop\Csharp-Socket-Server-master\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
                         "SET PW='" + ins.New_Pw + "' WHERE ID='" + ins.Id + "'", con);
-                
+
                 if (Key_Table.is_Email_Vertified(uId.get_Ip_Addr(), ins.Key))
                 {
                     con.Open();
                     cmd.ExecuteNonQuery();
-                    *_return_To_Client = SUCCED;                    
+                    *_return_To_Client = SUCCED;
                 }
                 else
                 {
@@ -546,7 +546,7 @@ namespace Server_Command
                 cmd.ExecuteNonQuery();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
-                
+
                 rdr.Read();
 
 
@@ -582,14 +582,14 @@ namespace Server_Command
                     }
                     else
                     {
-                        
+
                         *_return_To_Client = FAIL;
                     }
                 }
             }
             catch (Exception)
             {
-                * _return_To_Client = FAIL;
+                *_return_To_Client = FAIL;
             }
             finally
             {
@@ -797,9 +797,9 @@ namespace Server_Command
                 SqlDataReader rdr = cmd.ExecuteReader();
 
                 if (rdr.Read())
-                {                    
-                    *_return_To_Client = SUCCED;                  
-                    
+                {
+                    *_return_To_Client = SUCCED;
+
                 }
                 else
                 {
@@ -807,7 +807,7 @@ namespace Server_Command
                 }
                 //Console.WriteLine(Program.logFileWrite(ins.Id, "Gold", ins.Gold));
                 //*_return_To_Client = SUCCED;
-                
+
 
             }
             catch (Exception)
@@ -862,7 +862,7 @@ namespace Server_Command
             {
 
             }
-        }        
+        }
 
         [Serializable]
         private class RUBYUPDATE_J
@@ -926,7 +926,7 @@ namespace Server_Command
                 GAMEREWARD_J ins = JsonConvert.DeserializeObject<GAMEREWARD_J>(uId.Json);
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\h\Desktop\Csharp-Socket-Server-master\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
-                    "SET GOLD = " + ins.Gold+", DIAMOND = "+ins.Diamond+", RUBY = "+ins.Ruby +" WHERE NICKNAME='" + ins.Nickname + "'", con);
+                    "SET GOLD = " + ins.Gold + ", DIAMOND = " + ins.Diamond + ", RUBY = " + ins.Ruby + " WHERE NICKNAME='" + ins.Nickname + "'", con);
                 con.Open();
                 cmd.ExecuteNonQuery();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -938,7 +938,7 @@ namespace Server_Command
                 else
                 {
                     *_return_To_Client = FAIL;
-                }               
+                }
 
             }
             catch (Exception)
@@ -968,7 +968,7 @@ namespace Server_Command
                 con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\h\Desktop\Csharp-Socket-Server-master\Server\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("UPDATE ACCOUNT " +
                     "SET SKILLS = " + ins.Skills + " WHERE NICKNAME='" + ins.Nickname + "'", con);
-    
+
                 con.Open();
                 cmd.ExecuteNonQuery();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -995,7 +995,7 @@ namespace Server_Command
         }
 
     }
-    
+
 }
 
 

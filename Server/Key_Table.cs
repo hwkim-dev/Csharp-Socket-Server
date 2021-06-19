@@ -30,7 +30,7 @@ namespace Login_Server
                 vertified = false;
                 vertinum = 0;
             }
-            
+
             //5분에 1번실행됨 -> 테이블의 모든 정보 삭제
             public void reset_Id()
             {
@@ -45,8 +45,8 @@ namespace Login_Server
         private static byte time_now;
         private static byte[] cursor;
 
-        
-        private static id_Table[,] id_T = new id_Table[key_Length,index_Length];
+
+        private static id_Table[,] id_T = new id_Table[key_Length, index_Length];
         public static void boot()
         {
             try
@@ -74,7 +74,7 @@ namespace Login_Server
             {
 
             }
-            
+
         }
         private static Object obj = new object();
         public static short add(string ip, int vertinum)
@@ -83,7 +83,7 @@ namespace Login_Server
             {
                 lock (obj)
                 {
-                    
+
                     short key_index = 0;
                     byte index = 0;
                     key_index = (short)(time_now * 1000);
@@ -104,7 +104,7 @@ namespace Login_Server
             catch (Exception)
             {
                 return -1;
-            }            
+            }
         }
 
         public static bool email_Vertify(string ip, ushort key_index, int vertinum)
@@ -130,14 +130,14 @@ namespace Login_Server
                 //흐른 시간 사이에 time_now 가 있다면 테이블이 생성되고 3분이 안넘었다는뜻
                 // tip => 서버의 구조상 실제 유저에게 주어지는 시간은
                 //생성한 시간(1분미만) + 3분이다
-                if ((id_T[key, index].verti_Time) % key_Length <= time_now 
+                if ((id_T[key, index].verti_Time) % key_Length <= time_now
                     && (id_T[key, index].verti_Time + 3) % key_Length >= time_now)
                 {
 
                     //이메일 인증으로 들어온 숫자와
                     //테이블에 있는 인증 숫자가 같다면 인증성공
                     if (id_T[key, index].vertinum == vertinum)
-                    {                            
+                    {
                         //인증이 성공했다고 변수를 바꿈
                         id_T[key, index].vertified = true;
                         return true;
@@ -172,7 +172,7 @@ namespace Login_Server
                 }
                 ++ip_Index;
             }
-            if(id_T[key, index].vertified == true)
+            if (id_T[key, index].vertified == true)
             {
                 return true;
             }

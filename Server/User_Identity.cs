@@ -11,7 +11,7 @@ namespace Login_Server
         private string ip_Addr;
         //private unsafe byte[] _return_to_client;
 
-        
+
         public byte type() { return Fn; }
         //public int Json_Leng_Nofn() { return (json.Length - 8); }
 
